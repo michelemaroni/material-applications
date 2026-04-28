@@ -1,0 +1,34 @@
+FROM ubuntu:24.04
+
+#Set WORKDIR
+WORKDIR /home/ubuntu
+
+#Set dependencies
+RUN apt update && apt install -y curl
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt install -y nodejs
+
+# Verify the Node.js version:
+RUN node -v
+# Should print "v16.20.2".
+# Verify npm version:
+RUN npm -v 
+# Should print "8.19.4".
+
+#Copy project files
+COPY . .
+
+#Set up npm dependencies
+RUN npm install
+
+#Set up backend api connection
+ENV REACT_APP_BACKEND_URL=http://localhost:8080
+
+#Build the app
+RUN npm run build
+
+#Serve it on port 5001
+EXPOSE 5001
+RUN npm install -g serve
+CMD ["serve", "-s", "-l", "5001", "build"]
+#CMD bash
