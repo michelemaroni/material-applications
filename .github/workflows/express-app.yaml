@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'express-app/**'
+      - '.github/workflows/express-app.yaml'
 
 jobs:
   build:  # name of the job
@@ -26,5 +29,6 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: express_app
+        file: express_app/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/express-app:latest
