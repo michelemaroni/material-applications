@@ -1,5 +1,9 @@
 name: Release Node.js app
 
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:  # name of the job
