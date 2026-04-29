@@ -1,0 +1,23 @@
+FROM ubuntu:24.04
+
+WORKDIR /home/ubuntu
+
+RUN apt update && apt install -y wget xsel
+RUN wget https://go.dev/dl/go1.16.15.linux-amd64.tar.gz
+RUN rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.15.linux-amd64.tar.gz
+ENV PATH=$PATH:/usr/local/go/bin
+
+RUN useradd -m appuser
+RUN chown appuser .
+USER appuser
+
+COPY . .
+RUN go build
+
+ENV GIN_MODE=release
+EXPOSE 8080
+
+ENV REQUEST_ORIGIN=http://localhost:5001
+CMD ["./server"]
+
+
