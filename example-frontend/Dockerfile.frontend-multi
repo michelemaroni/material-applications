@@ -1,0 +1,28 @@
+FROM node:16-alpine AS builder
+
+WORKDIR /home
+
+COPY . .
+RUN npm install
+
+ENV REACT_APP_BACKEND_URL=http://localhost:8080
+
+RUN npm run build
+
+RUN rm -rf public/ src/
+
+# we will now add a new stage
+FROM node:16-alpine
+
+WORKDIR /home
+
+COPY --from=builder /home/build/ /home/build/
+
+RUN npm install -g serve
+
+RUN adduser -D appuser && chown appuser .
+USER appuser
+
+EXPOSE 5001
+
+CMD ["serve", "-s", "-l", "5001", "build"]
